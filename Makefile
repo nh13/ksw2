@@ -1,11 +1,35 @@
 CC=			gcc
 CFLAGS=		-g -Wall -Wextra -Wc++-compat -O2
-CPPFLAGS=	-DHAVE_KALLOC
+CPPFLAGS=	-DHAVE_KALLOC -DKSW_SSE2_ONLY -D__SSE2__
 INCLUDES=	-I.
 OBJS=		ksw2_gg.o ksw2_gg2.o ksw2_gg2_sse.o ksw2_extz.o ksw2_extz2_sse.o \
 			ksw2_extd.o ksw2_extd2_sse.o ksw2_extf2_sse.o ksw2_exts2_sse.o
 PROG=		ksw2-test
 LIBS=		-lz
+
+ifneq ($(aarch64),)
+    arm_neon=1
+endif
+
+ifneq ($(arm_neon),) # if arm_neon is not defined
+    INCLUDES+=-Isse2neon
+ifeq ($(aarch64),)  #if aarch64 is not defined
+    CFLAGS+=-D_FILE_OFFSET_BITS=64 -mfpu=neon -fsigned-char
+else                #if aarch64 is defined
+    CFLAGS+=-D_FILE_OFFSET_BITS=64 -fsigned-char
+endif
+endif
+
+ifneq ($(asan),)
+    CFLAGS+=-fsanitize=address
+    LIBS+=-fsanitize=address -ldl
+endif
+
+ifneq ($(tsan),)
+    CFLAGS+=-fsanitize=thread
+    LIBS+=-fsanitize=thread -ldl
+endif
+
 
 ifneq ($(gaba),) # gaba source code directory
 	CPPFLAGS += -DHAVE_GABA
