@@ -46,7 +46,14 @@ documentations. TeX file [ksw2.tex](tex/ksw2.tex) gives brief derivation.
 
 To compile the test program `ksw-test`, just type `make`. It takes the
 advantage of SSE4.1 when available. To compile with SSE2 only, use `make
-sse2=1` instead. If you have installed [parasail][para], use `make
+sse2=1` instead, which will make minimap2 slightly slower.
+
+`ksw2` also works with ARM CPUs supporting the NEON instruction sets. To
+compile for 32 bit ARM architectures (such as ARMv7), use `make arm_neon=1`. To
+compile for for 64 bit ARM architectures (such as ARMv8), use `make arm_neon=1
+aarch64=1`.
+
+If you have installed [parasail][para], use `make
 parasail=prefix`, where `prefix` points to the parasail install directory (e.g.
 `/usr/local`).
 
